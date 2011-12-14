@@ -11,7 +11,7 @@ namespace Oyster.Examples.ProtoBuf
         private const int OfficeCount = 5;
         private const int EmployeeCount = 6;
         private const int TaskCount = 3;
-        private const int IterationCount = 20000;
+        private const int IterationCount = 1000;
 
         private static void Main()
         {
@@ -37,8 +37,6 @@ namespace Oyster.Examples.ProtoBuf
             {
                 WriteResult(result.Name, result.TimeSize.Item1.ToString(), result.TimeSize.Item2.ToString(), result.TimeSize.Item3.ToString());
             }
-
-            Console.ReadLine();
         }
 
         private static Tuple<int, int, int> TestSerializer(
