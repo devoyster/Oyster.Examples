@@ -33,6 +33,10 @@ namespace Oyster.Examples.Expressions.Test
             checkEqual(reduced3, reduced4);
 
             value = 1;
+
+            var reduced5 = expr3.ReduceVariables();
+            reduced5.ToString().Should().Not.Be(reduced3.ToString());
+
             Action<Expression<Func<string, string>>> checkScope = e => e.Compile()("123456").Length.Should().Be(4);
             checkScope(reduced1);
             checkScope(reduced2);
