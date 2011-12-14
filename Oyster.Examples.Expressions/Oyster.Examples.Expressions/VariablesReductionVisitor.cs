@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace Oyster.Examples.Expressions
@@ -24,7 +25,7 @@ namespace Oyster.Examples.Expressions
             node = base.Visit(node);
 
             // If all the child expressions are constants then current one should be constant as well
-            if (_children.Count > 0 && _children.TrueForAll(e => e == null || e.NodeType == ExpressionType.Constant))
+            if (_children.Any() && _children.All(e => e == null || e is ConstantExpression))
             {
                 // Evaluate expression locally
                 node = Expression.Constant(Expression.Lambda(node).Compile().DynamicInvoke(), node.Type);
