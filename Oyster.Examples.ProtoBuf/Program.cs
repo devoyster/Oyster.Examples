@@ -32,16 +32,16 @@ namespace Oyster.Examples.ProtoBuf
             Console.WriteLine("Serialization of {0} objects, {1} iterations:", OfficeCount * EmployeeCount * TaskCount, IterationCount);
             Console.WriteLine();
 
-            WriteResult(string.Empty, "Duration(ms)", "Size(bytes)");
+            WriteResult(string.Empty, "Serialize(ms)", "Deserialize(ms)", "Size(bytes)");
             foreach (var result in results)
             {
-                WriteResult(result.Name, result.TimeSize.Item1.ToString(), result.TimeSize.Item2.ToString());
+                WriteResult(result.Name, result.TimeSize.Item1.ToString(), result.TimeSize.Item2.ToString(), result.TimeSize.Item3.ToString());
             }
 
             Console.ReadLine();
         }
 
-        private static Tuple<int, int> TestSerializer(
+        private static Tuple<int, int, int> TestSerializer(
             int iterationCount,
             object data,
             Action<Stream, object> serializeFunc,
@@ -50,22 +50,26 @@ namespace Oyster.Examples.ProtoBuf
             using (var ms = new MemoryStream())
             {
                 int sizeBytes = 0;
-                var sw = Stopwatch.StartNew();
+                var serializeWatch = new Stopwatch();
+                var deserializeWatch = new Stopwatch();
                 while (iterationCount-- > 0)
                 {
                     ms.Position = 0;
+                    serializeWatch.Start();
                     serializeFunc(ms, data);
                     ms.Flush();
+                    serializeWatch.Stop();
                     
                     sizeBytes = (int)ms.Position;
 
                     ms.Position = 0;
+                    deserializeWatch.Start();
                     deserializeFunc(ms);
                     ms.Flush();
+                    deserializeWatch.Stop();
                 }
-                sw.Stop();
 
-                return Tuple.Create((int)sw.ElapsedMilliseconds, sizeBytes);
+                return Tuple.Create((int)serializeWatch.ElapsedMilliseconds, (int)deserializeWatch.ElapsedMilliseconds, sizeBytes);
             }
         }
 
@@ -74,9 +78,9 @@ namespace Oyster.Examples.ProtoBuf
             return Enumerable.Repeat(0, OfficeCount).Select(_ => RandomData.GenerateOffice(EmployeeCount, TaskCount)).ToArray();
         }
 
-        private static void WriteResult(string name, string duration, string size)
+        private static void WriteResult(string name, string serializeDuration, string deserializeDuration, string size)
         {
-            Console.WriteLine("{0}{1}{2}", name.PadRight(30), duration.PadLeft(15), size.PadLeft(15));
+            Console.WriteLine(name.PadRight(20) + serializeDuration.PadLeft(15) + deserializeDuration.PadLeft(20) + size.PadLeft(20));
         }
     }
 }
