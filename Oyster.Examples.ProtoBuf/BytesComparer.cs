@@ -23,7 +23,7 @@ namespace Oyster.Examples.ProtoBuf
             if (x == null) return 0;
 
             int result = -1623343517;
-            for (int i = 0; i < x.Length; i++)
+            for (int i = 0, step = x.Length / 4; i < x.Length; i += step)
             {
                 result = -1521134295 * result + x[i];
             }
