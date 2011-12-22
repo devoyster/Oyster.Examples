@@ -15,8 +15,7 @@ namespace Oyster.Examples.ProtoBuf
 
         private static void Main()
         {
-            Func<string, Action<Stream, object>, Func<Stream, object>, Tuple<string, Action<Stream, object>, Func<Stream, object>>> serializer =
-                (name, serialize, deserialize) => Tuple.Create("BinaryFormatter", serialize, deserialize);
+            Func<string, Action<Stream, object>, Func<Stream, object>, Tuple<string, Action<Stream, object>, Func<Stream, object>>> serializer = Tuple.Create;
 
             var binaryFormatter = new BinaryFormatter();
             var protoFormatter = new ProtoFormatter();
@@ -35,7 +34,7 @@ namespace Oyster.Examples.ProtoBuf
             Console.WriteLine("Serialization of {0} objects, {1} iterations:", OfficeCount * EmployeeCount * TaskCount, IterationCount);
             Console.WriteLine();
 
-            WriteResult(string.Empty, "Serialize(ms)", "Deserialize(ms)", "Size(bytes)");
+            WriteResult(string.Empty, "Write(ms)", "Read(ms)", "Size(bytes)");
             foreach (var result in results)
             {
                 WriteResult(result.Name, result.TimeSize.Item1.ToString(), result.TimeSize.Item2.ToString(), result.TimeSize.Item3.ToString());
@@ -48,6 +47,15 @@ namespace Oyster.Examples.ProtoBuf
             Action<Stream, object> serializeFunc,
             Func<Stream, object> deserializeFunc)
         {
+            // Do one run to eliminate init time
+            using (var ms = new MemoryStream())
+            {
+                serializeFunc(ms, data);
+                ms.Flush();
+                ms.Position = 0;
+                deserializeFunc(ms);
+            }
+
             using (var ms = new MemoryStream())
             {
                 int sizeBytes = 0;
@@ -81,7 +89,7 @@ namespace Oyster.Examples.ProtoBuf
 
         private static void WriteResult(string name, string serializeDuration, string deserializeDuration, string size)
         {
-            Console.WriteLine(name.PadRight(20) + serializeDuration.PadLeft(15) + deserializeDuration.PadLeft(20) + size.PadLeft(20));
+            Console.WriteLine(name.PadRight(20) + serializeDuration.PadLeft(10) + deserializeDuration.PadLeft(10) + size.PadLeft(13));
         }
     }
 }
