@@ -15,11 +15,14 @@ namespace Oyster.Examples.ProtoBuf
 
         private static void Main()
         {
+            Func<string, Action<Stream, object>, Func<Stream, object>, Tuple<string, Action<Stream, object>, Func<Stream, object>>> serializer =
+                (name, serialize, deserialize) => Tuple.Create("BinaryFormatter", serialize, deserialize);
+
             var binaryFormatter = new BinaryFormatter();
             var protoFormatter = new ProtoFormatter();
             TestSerializers(
-                Tuple.Create("BinaryFormatter", (Action<Stream, object>)binaryFormatter.Serialize, (Func<Stream, object>)binaryFormatter.Deserialize),
-                Tuple.Create("protobuf-net v2", (Action<Stream, object>)protoFormatter.Serialize, (Func<Stream, object>)protoFormatter.Deserialize));
+                serializer("BinaryFormatter", binaryFormatter.Serialize, binaryFormatter.Deserialize),
+                serializer("protobuf-net v2", protoFormatter.Serialize, protoFormatter.Deserialize));
         }
 
         private static void TestSerializers(params Tuple<string, Action<Stream, object>, Func<Stream, object>>[] serializers)
