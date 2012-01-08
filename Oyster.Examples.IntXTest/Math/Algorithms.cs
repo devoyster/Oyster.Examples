@@ -4,19 +4,19 @@ namespace Oyster.Examples.IntXTest.Math
 {
     public static class Algorithms<T>
     {
-        private static readonly ICalculator<T> Calc = Calculator<T>.Default;
-        private static readonly Matrix22<T> FibOneMatrix = new Matrix22<T>(Calc.One(), Calc.One(), Calc.One(), Calc.Zero());
+        private static readonly Matrix22<T> FibOneMatrix = new Matrix22<T>(1.Wrap<T>(), 1.Wrap<T>(), 1.Wrap<T>(), 0.Wrap<T>());
 
         public static T Pow(T x, int exp)
         {
-            var res = Calc.Constant(1);
+            var xw = x.Wrap();
+            var res = 1.Wrap<T>();
             while (exp != 0)
             {
                 if ((exp & 1) == 1)
                 {
-                    res = Calc.Mul(res, x);
+                    res *= xw;
                 }
-                x = Calc.Mul(x, x);
+                xw *= xw;
                 exp >>= 1;
             }
             return res;

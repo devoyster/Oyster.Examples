@@ -46,7 +46,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Math\Algorithms.cs" />
-    <Compile Include="Math\Calculators\CalculatorExtensions.cs" />
+    <Compile Include="Math\Calculators\OperandWrapperExtensions.cs" />
+    <Compile Include="Math\Calculators\OperandWrapper.cs" />
     <Compile Include="Math\Matrix22.cs" />
     <Compile Include="Math\Calculators\BigIntegerCalculator.cs" />
     <Compile Include="Math\Calculators\Calculator.cs" />
